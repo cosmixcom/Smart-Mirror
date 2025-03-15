@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^18.0.6"
+    "@types/node": "^18.0.6",
+    "express": "^4.21.2",
+    "javascript-obfuscator": "^4.1.1",
+    "socket.io": "^4.8.1",
+    "vercel": "^41.4.1"
   }
 }

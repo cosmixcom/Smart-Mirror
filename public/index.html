@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnarkMirror - Brutally Honest Reflections</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff4757;
+            --dark-bg: #1a1a1a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 1rem;
+            text-align: center;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .mobile-menu.active {
+            display: block;
+            max-height: 300px;
+        }
+
+        /* Main Sections */
+        section {
+            padding: 4rem 2rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding-top: 6rem;
+        }
+
+        .mirror-container {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            margin: 2rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .mirror-glass {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        #insult-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .cta-button {
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Features Section */
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Pricing Section */
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .pricing-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        /* FAQ Section */
+        .faq-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .faq-item:hover {
+            transform: translateX(10px);
+        }
+
+        /* Auth Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -45%);
+            background: var(--dark-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            z-index: 1001;
+            opacity: 0;
+            transition: all 0.3s ease-out;
+        }
+
+        .auth-modal.show {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .auth-input {
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background: var(--card-bg);
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            section {
+                padding: 4rem 1rem;
+            }
+
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .mirror-container {
+                width: 250px;
+                height: 250px;
+            }
+        }
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .privacy-link {
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <main id='main'>
+        <header>
+            <nav>
+                <div class="logo">SnarkMirror™</div>
+                <div class="nav-links">
+                    <button class="cta-button" onclick="showAuthModal()">Login</button>
+                </div>
+                <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            </nav>
+            <div class="mobile-menu" id="mobileMenu">
+                <button class="cta-button" onclick="showAuthModal()">Login</button>
+            </div>
+        </header>
+
+        <section class="hero visible">
+            <h1>Meet Your New Reality Check</h1>
+            <div class="mirror-container">
+                <div class="mirror-glass">
+                    <div id="insult-display">Click to see the truth</div>
+                </div>
+            </div>
+            <button class="cta-button" onclick="generateInsult(); setTimeout(() => {
+                showAuthModal()
+                }, 2000);">Insult Me Now</button>
+        </section>
+
+        <section id="features">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>Brutal Honesty</h3>
+                    <p>AI-powered insults that cut deeper than your ex's comments</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Daily Reality Checks</h3>
+                    <p>Never get too comfortable with yourself again</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Motivational Roasts</h3>
+                    <p>Turn your fragile ego into productive energy</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing">
+            <h2>Pricing Plans</h2>
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <h3>Free:</h3>
+                </div>
+                <div class="pricing-card">
+                    <h3>Pro</h3>
+                    <p>$99999999999999999 per second</p>
+                    <ul>
+                        <li>Nothing the free plan has</li>
+                        <li>Guaranteed to make you go broke</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq">
+            <h2>FAQ</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <h4>Is this product actually helpful?</h4>
+                    <p>No, but neither is your current life choices.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Can I return the product?</h4>
+                    <p>Only if you can return your face.</p>
+                </div>
+            </div>
+        </section>
+        
+        <div class="footer">
+            <a href="https://legal.zymono.com/privacy-policy" class="privacy-link">Privacy</a>
+        </div>
+    </main>
+
+    <div class="auth-modal" id="authModal">
+        <button class="close-button" onclick="hideAuthModal()">×</button>
+        <h2>Login to Get Roasted</h2>
+        <form class="auth-form" onsubmit="handleLogin(event)">
+            <input type="text" class="auth-input" placeholder="Social Security Number" required>
+            <button type="submit" class="cta-button">Login</button>
+        </form>
+    </div>
+    <script>
+        const insults = [
+            "Did you roll out of bed looking like that or was it a conscious choice?",
+            "Your face could scare a hungry dog off a meat truck.",
+            "If ugliness were a crime, you'd be serving multiple life sentences.",
+            "You look like a before picture in a plastic surgery ad.",
+            "I've seen better reflections in a funhouse mirror.",
+            "You're the reason they put 'objects in mirror may appear uglier' warnings."
+        ];
+
+        // Scroll Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Insult Generator
+        function generateInsult() {
+            const mirror = document.querySelector('.mirror-container');
+            const insultDisplay = document.getElementById('insult-display');
+
+            mirror.style.animation = 'shake 0.5s';
+            insultDisplay.style.opacity = '0';
+
+            setTimeout(() => {
+                const randomInsult = insults[Math.floor(Math.random() * insults.length)];
+                insultDisplay.textContent = randomInsult;
+                insultDisplay.style.opacity = '1';
+            }, 300);
+        }
+
+        // Auth Modal
+        function showAuthModal() {
+            document.getElementById('authModal').classList.add('show');
+            document.getElementById('authModal').style.display = 'block';
+        }
+
+        function hideAuthModal() {
+            document.getElementById('authModal').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('authModal').style.display = 'none';
+            }, 300);
+        }
+
+        // Login Handling
+        function handleLogin(event) {
+            event.preventDefault();
+            window.location.href = "./api/"
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('authModal');
+            if (event.target === modal) {
+                hideAuthModal();
+            }
+        }
+    </script>
+</body>
+</html>
